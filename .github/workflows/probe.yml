@@ -1,0 +1,22 @@
+name: probe
+on:
+  workflow_dispatch:
+    inputs:
+      tag: { required: true }
+      sleep: { default: '120' }
+      fail: { default: 'false' }
+concurrency:
+  group: probe-${{ inputs.tag == 'other' && 'other' || 'shared' }}
+  cancel-in-progress: false
+  queue: max
+run-name: probe ${{ inputs.tag }}
+jobs:
+  hold:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "start $(date -u +%FT%TZ) attempt ${{ github.run_attempt }}"; sleep ${{ inputs.sleep }}; echo "end $(date -u +%FT%TZ)"
+  maybe-fail:
+    needs: hold
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "attempt ${{ github.run_attempt }} $(date -u +%FT%TZ)"; [ "${{ inputs.fail }}" != "true" ] || [ "${{ github.run_attempt }}" != "1" ] || exit 1
