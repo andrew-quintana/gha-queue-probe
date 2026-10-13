@@ -1,0 +1,4 @@
+F=https://github.com/andrew-quintana/gha-queue-probe/actions/runs/38483447798 38483447798
+== after-failer 23:18:36
+probe failer	38483447798	1	queued	
+could not create workflow dispatch event: HTTP 500 (https://api.github.com/repos/andrew-quintana/gha-queue-probe/actions/workflows/383757474/dispatches)

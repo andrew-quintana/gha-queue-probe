@@ -1,0 +1,24 @@
+name: selfcancel
+on: workflow_dispatch
+concurrency:
+  group: selfcancel
+  cancel-in-progress: false
+  queue: max
+jobs:
+  supersede:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/cancel" -i | head -1
+          sleep 300
+          echo "cancel did not land"
+  downstream:
+    needs: supersede
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "should not run"
