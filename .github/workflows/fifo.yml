@@ -1,0 +1,16 @@
+name: fifo
+on:
+  workflow_dispatch:
+    inputs:
+      tag: { required: true }
+      sleep: { default: '3' }
+concurrency:
+  group: fifo
+  cancel-in-progress: false
+  queue: max
+run-name: fifo ${{ inputs.tag }}
+jobs:
+  hold:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "start $(date -u +%FT%TZ)"; sleep ${{ inputs.sleep }}
